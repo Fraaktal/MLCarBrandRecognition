@@ -10,8 +10,9 @@ namespace ML.Control
 {
     public class MLController
     {
-        private static string _assetsPath = Path.Combine(new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.Name, "assets");
-        private static string _imagesFolder = Path.Combine(_assetsPath, "cars_asset");
+        private static string _assetsPath = Path.Combine(new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, "assets");
+        public static string _imagesFolder = Path.Combine(_assetsPath, "cars_asset");
+        public static string _modelFolder = Path.Combine(_assetsPath, "model");
         private static string _trainTagsTsv = Path.Combine(_imagesFolder, "tags.tsv");
         private static string _testTagsTsv = Path.Combine(_imagesFolder, "test-tags.tsv");
 
@@ -21,10 +22,15 @@ namespace ML.Control
 
         private MLContext _mlContext;
         private ITransformer _model;
+        private IDataView _data;
+
+        public MLController()
+        {
+            _mlContext = new MLContext();
+        }
 
         public void InitializeAndLoadData()
         {
-            _mlContext = new MLContext(); 
             _model = GenerateModel(_mlContext);
             TestImages();
         }
@@ -49,7 +55,7 @@ namespace ML.Control
             var predictor = _mlContext.Model.CreatePredictionEngine<ImageData, ImagePrediction>(_model);
             var prediction = predictor.Predict(imageData);
 
-            if (Equals(prediction.Label, expectedResult))
+            if (expectedResult.Contains(prediction.PredictedLabelValue))
             {
                 Console.ForegroundColor = ConsoleColor.Green;
             }
@@ -58,7 +64,7 @@ namespace ML.Control
                 Console.ForegroundColor = ConsoleColor.Red;
             }
 
-            Console.WriteLine($"Image: {Path.GetFileName(imageData.ImagePath)} predicted as: {prediction.PredictedLabelValue} with score: {prediction.Score.Max()} ");
+            Console.WriteLine($"Image: {Path.GetFileName(imageData.ImagePath)} predicted as: {prediction.PredictedLabelValue} with score: {prediction.Score.Max()} Expected: {Path.GetFileNameWithoutExtension(path)}");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -86,7 +92,7 @@ namespace ML.Control
 
         private ITransformer GenerateModel(MLContext mlContext)
         {
-            IDataView trainingData = mlContext.Data.LoadFromTextFile<ImageData>(path: _trainTagsTsv, hasHeader: false);
+            _data = mlContext.Data.LoadFromTextFile<ImageData>(path: _trainTagsTsv, hasHeader: false);
 
             IEstimator<ITransformer> pipeline = mlContext.Transforms.LoadImages(outputColumnName: "input", imageFolder: _imagesFolder, inputColumnName: nameof(ImageData.ImagePath))
                 // The image transforms transform the images into the model's expected format.
@@ -99,7 +105,7 @@ namespace ML.Control
                 .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabelValue", "PredictedLabel"))
                 .AppendCacheCheckpoint(mlContext);
 
-            ITransformer model = pipeline.Fit(trainingData);
+            ITransformer model = pipeline.Fit(_data);
 
             IDataView testData = mlContext.Data.LoadFromTextFile<ImageData>(path: _testTagsTsv, hasHeader: false);
             IDataView predictions = model.Transform(testData);
@@ -129,5 +135,16 @@ namespace ML.Control
         }
 
         #endregion
+
+        public void LoadModel()
+        {
+            _model = _mlContext.Model.Load(Path.Combine(_modelFolder, "model.zip"), out var modelSchema);
+            TestImages();
+        }
+
+        public void SaveModel()
+        {
+            _mlContext.Model.Save(_model, _data.Schema, Path.Combine(_modelFolder, "model.zip"));
+        }
     }
 }
