@@ -19,24 +19,47 @@ namespace ML.Control
 
         private static string _inceptionTensorFlowModel = Path.Combine(_assetsPath, "inception", "tensorflow_inception_graph.pb");
 
+        private MLContext _mlContext;
+        private ITransformer _model;
+
         public void InitializeAndLoadData()
         {
-            MLContext mlContext = new MLContext(); 
-            ITransformer model = GenerateModel(mlContext);
-            //ClassifySingleImage(mlContext, model);
-
+            _mlContext = new MLContext(); 
+            _model = GenerateModel(_mlContext);
+            TestImages();
         }
 
-        private void ClassifySingleTestImage(MLContext mlContext, ITransformer model, string path, string expectedResult)
+        private void TestImages()
+        {
+            var images = new DirectoryInfo(_testFolder).GetFiles();
+
+            foreach (var image in images)
+            {
+                ClassifySingleTestImage(image.FullName, Path.GetFileNameWithoutExtension(image.Name));
+            }
+        }
+
+        private void ClassifySingleTestImage(string path, string expectedResult)
         {
             var imageData = new ImageData()
             {
                 ImagePath = path
             };
             
-            var predictor = mlContext.Model.CreatePredictionEngine<ImageData, ImagePrediction>(model);
-            var prediction = predictor.Predict(imageData); 
+            var predictor = _mlContext.Model.CreatePredictionEngine<ImageData, ImagePrediction>(_model);
+            var prediction = predictor.Predict(imageData);
+
+            if (Equals(prediction.Label, expectedResult))
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+
             Console.WriteLine($"Image: {Path.GetFileName(imageData.ImagePath)} predicted as: {prediction.PredictedLabelValue} with score: {prediction.Score.Max()} ");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         #region NoTouchRegion
@@ -49,14 +72,14 @@ namespace ML.Control
             }
         }
 
-        private void ClassifySingleImage(MLContext mlContext, ITransformer model, string path)
+        private void ClassifySingleImage(string path)
         {
             var imageData = new ImageData()
             {
                 ImagePath = path
             };
 
-            var predictor = mlContext.Model.CreatePredictionEngine<ImageData, ImagePrediction>(model);
+            var predictor = _mlContext.Model.CreatePredictionEngine<ImageData, ImagePrediction>(_model);
             var prediction = predictor.Predict(imageData);
             Console.WriteLine($"Image: {Path.GetFileName(imageData.ImagePath)} predicted as: {prediction.PredictedLabelValue} with score: {prediction.Score.Max()} ");
         }

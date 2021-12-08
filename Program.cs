@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ML.Control;
 
 namespace ML
 {
@@ -7,7 +8,8 @@ namespace ML
     {
         static void Main(string[] args)
         {
-
+            MLController controller = new MLController();
+            controller.InitializeAndLoadData();
         }
     }
 }
