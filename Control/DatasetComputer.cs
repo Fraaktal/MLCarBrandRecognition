@@ -13,7 +13,15 @@ namespace ML.Control
         {
             var parentDir = new DirectoryInfo(path);
 
-            Directory.Delete(resultPath,true);
+            try
+            {
+                Directory.Delete(resultPath, true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
             Directory.CreateDirectory(resultPath);
             var subdirs = parentDir.GetDirectories();
             int a = 1;

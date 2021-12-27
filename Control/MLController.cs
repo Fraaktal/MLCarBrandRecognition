@@ -10,23 +10,36 @@ namespace ML.Control
 {
     public class MLController
     {
-        private static string _assetsPath = Path.Combine(new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, "assets");
-        public static string _imagesFolder = Path.Combine(_assetsPath, "cars_asset");
-        public static string _modelFolder = Path.Combine(_assetsPath, "model");
-        private static string _trainTagsTsv = Path.Combine(_imagesFolder, "tags.tsv");
-        private static string _testTagsTsv = Path.Combine(_imagesFolder, "test-tags.tsv");
+        public string _assetsPath { get; set; }
+        public string _imagesFolder => Path.Combine(_assetsPath, "cars_asset");
+        public string _modelFolder => Path.Combine(_assetsPath, "model");
+        private string _trainTagsTsv => Path.Combine(_imagesFolder, "tags.tsv");
+        private string _testTagsTsv => Path.Combine(_imagesFolder, "test-tags.tsv");
 
-        private static string _testFolder = Path.Combine(_assetsPath, "test_images");
+        private string _testFolder => Path.Combine(_assetsPath, "test_images");
 
-        private static string _inceptionTensorFlowModel = Path.Combine(_assetsPath, "inception", "tensorflow_inception_graph.pb");
+        private string _inceptionTensorFlowModel => Path.Combine(_assetsPath, "inception", "tensorflow_inception_graph.pb");
 
         private MLContext _mlContext;
         private ITransformer _model;
         private IDataView _data;
 
-        public MLController()
+        private static MLController _instance;
+
+        private MLController(string result)
         {
+            _assetsPath = result;
             _mlContext = new MLContext();
+        }
+
+        public static MLController GetInstance(string result = "")
+        {
+            if (_instance == null)
+            {
+                _instance = new MLController(result);
+            }
+
+            return _instance;
         }
 
         public void InitializeAndLoadData()
@@ -78,7 +91,7 @@ namespace ML.Control
             }
         }
 
-        private void ClassifySingleImage(string path)
+        public ImagePrediction ClassifySingleImage(string path)
         {
             var imageData = new ImageData()
             {
@@ -88,6 +101,7 @@ namespace ML.Control
             var predictor = _mlContext.Model.CreatePredictionEngine<ImageData, ImagePrediction>(_model);
             var prediction = predictor.Predict(imageData);
             Console.WriteLine($"Image: {Path.GetFileName(imageData.ImagePath)} predicted as: {prediction.PredictedLabelValue} with score: {prediction.Score.Max()} ");
+            return prediction;
         }
 
         private ITransformer GenerateModel(MLContext mlContext)
