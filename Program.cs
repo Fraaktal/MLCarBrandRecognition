@@ -8,8 +8,13 @@ namespace ML
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Mode : (1 Load Model, 2 Read data, "+
-                              "3 Read data + save, 4: process data, "+
+            string dir = Directory.GetParent(Directory.GetCurrentDirectory())?.GetDirectories("ML_Asset")[0].FullName;
+
+            MLController.GetInstance(dir).LoadModel();
+            SocketServerController.StartServer();
+            /*
+            Console.WriteLine("Mode : (1 Load Model, 2 Read data, " +
+                              "3 Read data + save, 4: process data, " +
                               "5 : process data + save");
 
             string res = Console.ReadLine();
@@ -40,7 +45,10 @@ namespace ML
                 Console.WriteLine("TestMode ? (Y/n)");
                 string dbg = Console.ReadLine();
 
-                if (Equals(dbg, "Y") || Equals(dbg, "y")) { val = 50; }
+                if (Equals(dbg, "Y") || Equals(dbg, "y"))
+                {
+                    val = 50;
+                }
 
                 computer.ComputeCarAsset(path, Path.Combine(rpath, "cars_asset"), val);
                 MLController.GetInstance(rpath).InitializeAndLoadData();
@@ -55,11 +63,15 @@ namespace ML
                 Console.WriteLine("TestMode ? (Y/n)");
                 string dbg = Console.ReadLine();
 
-                if (Equals(dbg, "Y") || Equals(dbg, "y")) { val = 50; }
+                if (Equals(dbg, "Y") || Equals(dbg, "y"))
+                {
+                    val = 50;
+                }
+
                 computer.ComputeCarAsset(path, Path.Combine(rpath, "cars_asset"), val);
                 MLController.GetInstance(rpath).InitializeAndLoadData();
                 MLController.GetInstance(rpath).SaveModel();
-            }
-        }      
+            }*/
+        }
     }
 }

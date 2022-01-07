@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ML", "ML.csproj", "{6BFBBC7D-F224-4CD0-AA45-D732B72F20E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLCarBrandRecognizer", "..\MLCarBrandRecognizer\MLCarBrandRecognizer\MLCarBrandRecognizer.csproj", "{57CDA115-607C-4BE1-A094-434A162D3959}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLCarBrandRecognizer.Android", "..\MLCarBrandRecognizer\MLCarBrandRecognizer.Android\MLCarBrandRecognizer.Android.csproj", "{D237F247-01EC-4757-B841-D04B7C77B71E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,16 @@ Global
 		{6BFBBC7D-F224-4CD0-AA45-D732B72F20E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BFBBC7D-F224-4CD0-AA45-D732B72F20E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BFBBC7D-F224-4CD0-AA45-D732B72F20E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57CDA115-607C-4BE1-A094-434A162D3959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57CDA115-607C-4BE1-A094-434A162D3959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57CDA115-607C-4BE1-A094-434A162D3959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57CDA115-607C-4BE1-A094-434A162D3959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D237F247-01EC-4757-B841-D04B7C77B71E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D237F247-01EC-4757-B841-D04B7C77B71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D237F247-01EC-4757-B841-D04B7C77B71E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D237F247-01EC-4757-B841-D04B7C77B71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D237F247-01EC-4757-B841-D04B7C77B71E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D237F247-01EC-4757-B841-D04B7C77B71E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
